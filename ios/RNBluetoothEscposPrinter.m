@@ -27,6 +27,7 @@ Byte FF[] = {0x0C};
 Byte PIECE[] = {0xFF};
 Byte NUL[] =  {0x00};
 Byte SIGN[] = {0x21};//!
+Byte I[] = {0x69};//i
 Byte T[] = {0x74};//t
 Byte AND[] ={0x26}; //&
 Byte M[] = {0x4d};//M
@@ -73,6 +74,28 @@ RCT_EXPORT_MODULE(BluetoothEscposPrinter);
 RCT_EXPORT_METHOD(setWidth:(int) width)
 {
     self.deviceWidth = width;
+}
+
+RCT_EXPORT_METHOD(cutPaper:(NSInteger *)cutRange
+                  withResolver:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromiseRejectBlock) reject)
+{
+    if(RNBluetoothManager.isConnected){
+        NSLog(@"########## CUT FUNCTION ##########");
+        NSMutableData *toSend = [[NSMutableData alloc] init];
+    
+        [toSend appendBytes:ESC_GS length:sizeof(ESC_GS)];
+        [toSend appendBytes:V length:sizeof((V))];
+        [toSend appendBytes:&cutRange length:sizeof(cutRange)];
+
+        NSLog(@"toSend");
+//        NSLog(cutRange);
+        pendingReject =reject;
+        pendingResolve = resolve;
+        [RNBluetoothManager writeValue:toSend withDelegate:self];
+        // [RNBluetoothManager writeValue:toSend withDelegate:delegate];
+    }else{
+        reject(@"COMMAND_NOT_SEND",@"COMMAND_NOT_SEND",nil);
+    }
 }
 
 //public void printerInit(final Promise promise){
