@@ -351,6 +351,10 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
         }
     }
 
+    @ReactMethod
+    public void cutPaper(int cutRange) {
+        sendDataByte(PrinterCommand.POS_Set_Cut(cutRange));
+    }
 
     @ReactMethod
     public void selfTest(@Nullable Callback cb) {
